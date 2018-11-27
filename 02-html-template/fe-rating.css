@@ -1,0 +1,11 @@
+i {
+  border-radius: 100%;
+}
+
+.active {
+  background: rgb(255, 75, 75);
+}
+
+.hovered {
+  background: rgb(75, 219, 255);
+}
