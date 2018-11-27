@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Custom Elements</title>
+  </head>
+
+  <body>
+    <fe-rating rating="3" max="5" class="js-fe-rating"></fe-rating>
+
+    <script src="fe-rating.js"></script>
+
+    <script>
+      const ratingComponent = document.querySelector(".js-fe-rating");
+      ratingComponent.addEventListener("rate", logRateEvent);
+
+      function logRateEvent({ detail }) {
+        console.log(detail);
+      }
+    </script>
+  </body>
+</html>
