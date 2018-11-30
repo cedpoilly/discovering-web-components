@@ -3,10 +3,15 @@ class FeRating extends HTMLElement {
     super();
 
     this.emojiList = [];
+    this.container = null;
+    this._shadowRoot = null;
   }
 
-  connectedCallback() {
-    this.setStyles();
+  async connectedCallback() {
+    await this.setMarkUp();
+    this.setShadowRoot();
+    await this.setTemplate();
+    await this.setStyles();
 
     this.buildRange(this.max);
 
@@ -45,15 +50,19 @@ class FeRating extends HTMLElement {
   reactToMaxChange() {
     this.buildRange(this.max);
 
-    while (this.hasChildNodes()) {
-      this.removeChild(this.firstChild);
+    if (!this._shadowRoot) {
+      return;
+    }
+
+    while (this._shadowRoot.hasChildNodes()) {
+      this._shadowRoot.removeChild(this._shadowRoot.firstChild);
     }
 
     this.setStyles();
 
     this.highlight(this.rating);
 
-    this.emojiList.forEach(emoji => this.appendChild(emoji));
+    this.emojiList.forEach(emoji => this._shadowRoot.appendChild(emoji));
   }
 
   reactToRatingChange() {
@@ -65,6 +74,10 @@ class FeRating extends HTMLElement {
   }
 
   set rating(value) {
+    if (value < 1) {
+      return;
+    }
+
     this.setAttribute("rating", value);
   }
 
@@ -73,38 +86,62 @@ class FeRating extends HTMLElement {
   }
 
   set max(value) {
+    if (value < 1) {
+      return;
+    }
+
     this.setAttribute("max", value);
   }
 
-  setStyles() {
-    const styles = document.createElement("style");
-    styles.innerHTML = `
-      i { border-radius: 100%; }
+  async setMarkUp() {
+    this.innerHTML = await this.getFileText("fe-rating.markup.html");
+  }
 
-      .active { background: rgb(255, 75, 75); }
-      
-      .hovered { background: rgb(75, 219, 255); }
-    `;
-    this.appendChild(styles);
+  async setTemplate() {
+    const template = await this.getFileText("fe-rating.template.html");
+    this.container.innerHTML += template;
+  }
+
+  async setStyles() {
+    const styles = document.createElement("style");
+    styles.innerHTML = await this.getFileText("fe-rating.css");
+    this._shadowRoot.appendChild(styles);
+  }
+
+  async getFileText(path) {
+    const response = await fetch(path);
+    const template = await response.text();
+    return template;
+  }
+
+  setShadowRoot() {
+    this.container = document.querySelector("#rating");
+    this._shadowRoot = this.container.attachShadow({ mode: "open" });
   }
 
   buildRange(numberOfElements) {
+    const template = document.querySelector("#icon-template");
+
+    if (!template) {
+      return;
+    }
+
     this.emojiList = [];
 
     for (let i = 0; i < numberOfElements; i++) {
-      const emojiElement = document.createElement("i");
-      emojiElement.innerHTML = "⭐";
-      this.appendChild(emojiElement);
-      this.emojiList = [...this.emojiList, emojiElement];
+      const clone = template.content.cloneNode(true);
+      const element = clone.querySelector("i");
+
+      this._shadowRoot.appendChild(element);
+
+      this.emojiList = [...this.emojiList, element];
     }
   }
 
   highlight(rating) {
-    this.emojiList.forEach(toggleActiveClass);
-
-    function toggleActiveClass(emoji, index) {
+    this.emojiList.forEach((emoji, index) => {
       emoji.classList.toggle("active", index < rating);
-    }
+    });
   }
 
   setHoverBehaviour() {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Custom Elements</title>
+    <style>
+      i {
+        outline: 1px solid green;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button class="js-rating-increase" title="Increase max value (+1)">
+      +
+    </button>
+    <button class="js-rating-decrease" title="Decrease max value (-1)">
+      -
+    </button>
+
+    <fe-rating rating="3" max="5" class="js-fe-rating"></fe-rating>
+
+    <script src="fe-rating.js"></script>
+
+    <script>
+      const dqs = document.querySelector.bind(document);
+
+      const increase = dqs(".js-rating-increase");
+      const decrease = dqs(".js-rating-decrease");
+      const ratingComponent = dqs(".js-fe-rating");
+
+      increase.addEventListener("click", increaseMax);
+      decrease.addEventListener("click", decreaseMax);
+      ratingComponent.addEventListener("rate", logRateEvent);
+
+      function increaseMax() {
+        const currentMaxValue = Number(ratingComponent.getAttribute("max"));
+        ratingComponent.setAttribute("max", currentMaxValue + 1);
+      }
+
+      function decreaseMax() {
+        const currentMaxValue = Number(ratingComponent.getAttribute("max"));
+        ratingComponent.setAttribute("max", currentMaxValue - 1);
+      }
+
+      function logRateEvent({ detail }) {
+        console.log(`Rated at: ${detail}`);
+      }
+    </script>
+  </body>
+</html>

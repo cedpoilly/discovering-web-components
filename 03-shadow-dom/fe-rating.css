@@ -1,0 +1,11 @@
+:host {
+  transition: 1s all;
+}
+
+i {
+  border-radius: 100%;
+}
+
+.active {
+  background: rgb(255, 75, 75);
+}
