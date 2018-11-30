@@ -22,9 +22,9 @@
 
     <fe-rating rating="3" max="5" class="js-fe-rating"></fe-rating>
 
-    <script src="fe-rating.js"></script>
+    <!-- <script src="fe-rating.mjs" type="module"></script> -->
 
-    <!-- * Save for next demo -->
+    <!-- * Is the global variable accessible? -->
     <!--
       <script>
         console.log(myGlobalVar);
@@ -33,7 +33,9 @@
       </script>
     -->
 
-    <script>
+    <script type="module">
+      import "./fe-rating.mjs";
+
       const dqs = document.querySelector.bind(document);
 
       const increase = dqs(".js-rating-increase");

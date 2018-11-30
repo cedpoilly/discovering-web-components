@@ -7,11 +7,11 @@ class FeRating extends HTMLElement {
     this._shadowRoot = null;
   }
 
-  async connectedCallback() {
-    await this.setMarkUp();
+  connectedCallback() {
+    this.setMarkUp();
     this.setShadowRoot();
-    await this.setTemplate();
-    await this.setStyles();
+    this.setTemplate();
+    this.setStyles();
 
     this.buildRange(this.max);
 
@@ -93,25 +93,36 @@ class FeRating extends HTMLElement {
     this.setAttribute("max", value);
   }
 
-  async setMarkUp() {
-    this.innerHTML = await this.getFileText("fe-rating.markup.html");
+  setMarkUp() {
+    this.innerHTML = /*html*/ `
+      <span rating="3" role="range" id="rating"></span>
+    `;
   }
 
-  async setTemplate() {
-    const template = await this.getFileText("fe-rating.template.html");
-    this.container.innerHTML += template;
+  setTemplate() {
+    this.container.innerHTML += /*template*/ `
+      <template id="icon-template">
+        <i>⭐</i>
+      </template>
+    `;
   }
 
-  async setStyles() {
+  setStyles() {
     const styles = document.createElement("style");
-    styles.innerHTML = await this.getFileText("fe-rating.css");
+    styles.innerHTML = /*css*/ `
+    :host {
+      transition: 1s all;
+    }
+    
+    i {
+      border-radius: 100%;
+    }
+    
+    .active {
+      background: rgb(255, 75, 75);
+    }    
+    `;
     this._shadowRoot.appendChild(styles);
-  }
-
-  async getFileText(path) {
-    const response = await fetch(path);
-    const template = await response.text();
-    return template;
   }
 
   setShadowRoot() {
@@ -188,5 +199,4 @@ class FeRating extends HTMLElement {
 
 customElements.define("fe-rating", FeRating);
 
-// * Save for next demo
-// let myGlobalVar = "MY_GLOBAL_VAR";
+let myGlobalVar = "MY_GLOBAL_VAR";
